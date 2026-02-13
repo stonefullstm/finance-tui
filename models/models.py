@@ -3,7 +3,7 @@ from typing import List, Optional
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column, relationship
-from db import Base
+from db.config import Base
 import datetime
 
 
@@ -11,9 +11,9 @@ class Category(Base):
     """Model para a tabela Categories"""
     __tablename__ = 'CATEGORIES'
 
-    id = Mapped[int] = mapped_column(primary_key=True)
-    name = Mapped[str]
-    transactions = Mapped[List['Transaction']] = relationship()
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str]
+    transactions: Mapped[List['Transaction']] = relationship()
 
     def __repr__(self):
         return f"<Category(id={self.id}, name='{self.name}')>"
@@ -37,18 +37,19 @@ class Category(Base):
 class Transaction(Base):
     __tablename__ = 'TRANSACTIONS'
 
-    id = Mapped[int] = mapped_column(primary_key=True)
-    description = Mapped[Optional[str]]
-    transaction_date = Mapped[datetime.datetime]
-    transaction_value = Mapped[float]
-    type = Mapped[str]
-    category_id = Mapped[int] = mapped_column(ForeignKey('CATEGORIES.id'))
-    category = Mapped['Category'] = relationship()
+    id: Mapped[int] = mapped_column(primary_key=True)
+    description: Mapped[Optional[str]]
+    transaction_date: Mapped[datetime.datetime]
+    transaction_value: Mapped[float]
+    type: Mapped[str]
+    category_id: Mapped[int] = mapped_column(ForeignKey('CATEGORIES.id'))
+    category: Mapped['Category'] = relationship(back_populates='transactions')
 
     def __repr__(self):
         return (
             f"<Transaction(id={self.id}, date={self.transaction_date}, "
             f"value={self.transaction_value}, type={self.type})>"
+            f" - Category: {self.category.name if self.category else 'None'}"
         )
 
     def to_dict(self):
