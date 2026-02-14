@@ -12,9 +12,9 @@ def menu_interativo():
 
     try:
         while True:
-            print("\n" + "="*50)
+            print("\n" + "=" * 50)
             print("SISTEMA DE CATEGORIAS (Firebird-Driver)")
-            print("="*50)
+            print("=" * 50)
             print("1. Listar todas categorias")
             print("2. Buscar categoria por ID")
             print("3. Buscar categorias por nome")
@@ -24,16 +24,16 @@ def menu_interativo():
             print("7. Criar transação para categoria")
             print("8. Listar transações")
             print("0. Sair")
-            print("-"*50)
+            print("-" * 50)
 
             opcao = input("Escolha uma opção: ").strip()
 
-            if opcao == '1':
+            if opcao == "1":
                 contatos = category_dao.get_all_categories()
                 print(f"\n📋 Total: {len(contatos)} categorias")
                 for c in contatos:
                     print(f"  [{c.id}] {c.name}")
-            elif opcao == '4':
+            elif opcao == "4":
                 print("\n➕ NOVA CATEGORIA")
                 name = input("Nome: ")
                 categoria = category_dao.create_category(name)
@@ -41,14 +41,16 @@ def menu_interativo():
                     print(f"✅ Categoria criada com ID {categoria.id}")
                 else:
                     print("❌ Falha ao criar categoria")
-            elif opcao == '7':
+            elif opcao == "7":
                 print("\n➕ NOVA TRANSAÇÃO")
                 category_id = int(input("ID da Categoria: "))
                 description = input("Descrição: ")
-                transaction_date = input("Data (YYYY-MM-DD): ")
+                transaction_date = input("Data (DD-MM-YYYY): ")
                 transaction_value = float(input("Valor: "))
-                type = input("Tipo (income/expense): ")
+                type = input("Tipo (Receita/Despesa): ")
                 categoria = category_dao.get_category_by_id(category_id)
+                day, month, year = map(int, transaction_date.split("-"))
+                transaction_date = f"{year:04d}-{month:02d}-{day:02d}"
                 if categoria:
                     transaction = transaction_dao.create_transaction(
                         {
@@ -56,7 +58,7 @@ def menu_interativo():
                             "transaction_date": transaction_date,
                             "transaction_value": transaction_value,
                             "type": type,
-                            "category_id": category_id
+                            "category_id": category_id,
                         }
                     )
                     if transaction:
@@ -65,17 +67,18 @@ def menu_interativo():
                         print("❌ Falha ao criar transação")
                 else:
                     print("❌ Categoria não encontrada")
-            elif opcao == '8':
+            elif opcao == "8":
                 transactions = transaction_dao.get_all_transactions()
                 print(f"\n📋 Total de transações: {len(transactions)}")
                 for t in transactions:
-                    print(f"  [{t.id}] {t.description} - "
-                          f"{t.transaction_date} - "
-                          f"{t.transaction_value} - "
-                          f"{t.type} - "
-                          f"Categoria: {
-                              t.category.name if t.category else 'None'}")
-            elif opcao == '0':
+                    print(
+                        f"  [{t.id}] {t.description} - "
+                        f"{t.transaction_date} - "
+                        f"{t.transaction_value} - "
+                        f"{t.type} - "
+                        f"Categoria: {t.category.name if t.category else 'None'}"
+                    )
+            elif opcao == "0":
                 print("Saindo...")
                 break
             else:
@@ -89,8 +92,7 @@ def menu_interativo():
 def main():
     print("Testando conexão com o banco de dados...")
     if not testar_conexao():
-        print("Não foi possível estabelecer conexão. "
-              "Verifique as configurações.")
+        print("Não foi possível estabelecer conexão. Verifique as configurações.")
         sys.exit(1)
 
     menu_interativo()

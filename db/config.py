@@ -16,9 +16,7 @@ engine = create_engine(
     pool_size=5,
     max_overflow=10,
     # Configurações específicas do firebird-driver
-    connect_args={
-        'charset': 'UTF8'
-    }
+    connect_args={"charset": "UTF8"},
 )
 
 # Criar sessão
@@ -41,12 +39,13 @@ def testar_conexao():
     """Testa a conexão com o banco usando firebird-driver"""
     try:
         from firebird.driver import connect
+
         # Teste direto com firebird-driver
         conn = connect(
             database=f"localhost/3050:{DB_PATH}",
-            user='sysdba',
-            password='masterkey',
-            charset='UTF8'
+            user="sysdba",
+            password="masterkey",
+            charset="UTF8",
         )
         conn.close()
         print("✓ Conexão com firebird-driver estabelecida!")

@@ -47,9 +47,7 @@ class CategoryDAO:
             print(f"Erro ao criar categoria: {e}")
             return None
 
-    def update_category(self,
-                        category_id: int,
-                        new_name: str) -> Optional[Category]:
+    def update_category(self, category_id: int, new_name: str) -> Optional[Category]:
         """Atualiza o nome de uma categoria existente"""
         try:
             category = self.session.get(Category, category_id)

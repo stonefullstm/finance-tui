@@ -15,19 +15,13 @@ class TransactionDAO:
     def get_all_transactions(self) -> List[Transaction]:
         """Retorna todas as transações"""
         try:
-            transactions = (
-                self.session.execute(select(Transaction))
-                .scalars()
-                .all()
-            )
+            transactions = self.session.execute(select(Transaction)).scalars().all()
             return transactions
         except SQLAlchemyError as e:
             print(f"Erro ao buscar transações: {e}")
             return []
 
-    def get_transaction_by_id(
-        self, transaction_id: int
-    ) -> Optional[Transaction]:
+    def get_transaction_by_id(self, transaction_id: int) -> Optional[Transaction]:
         """Retorna uma transação pelo ID"""
         try:
             transaction = self.session.get(Transaction, transaction_id)
