@@ -12,6 +12,20 @@ class TransactionDAO:
     def __init__(self):
         self.session = SessionLocal()
 
+    def __enter__(self):
+        """Método chamado quando entra no bloco 'with'"""
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        """Método chamado quando sai do bloco 'with'"""
+        if exc_type is not None:
+            # Se houve exceção, faz rollback
+            self.session.rollback()
+        # Sempre fecha a sessão
+        self.close()
+        # Retorna False para propagar exceções (se houver)
+        return False
+
     def get_all_transactions(self) -> List[Transaction]:
         """Retorna todas as transações"""
         try:

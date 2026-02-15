@@ -1,11 +1,11 @@
 from finance.tui import FinanceApp
-from dao.transaction_dao import TransactionDAO
+# from dao.transaction_dao import TransactionDAO
 
-transaction_dao = TransactionDAO()
+# transaction_dao = TransactionDAO()
 
 
 def main():
-    app = FinanceApp(db=transaction_dao)
+    app = FinanceApp()
     app.run()
 
 

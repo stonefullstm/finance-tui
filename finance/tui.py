@@ -2,6 +2,7 @@ from textual.app import App
 from textual.containers import Grid, Horizontal, Vertical
 from textual.screen import Screen
 from textual.widgets import Button, DataTable, Footer, Header, Input, Label, Static
+from dao.transaction_dao import TransactionDAO
 
 
 class QuestionDialog(Screen):
@@ -38,9 +39,8 @@ class FinanceApp(App):
         ("q", "request_quit", "Quit"),
     ]
 
-    def __init__(self, db):
+    def __init__(self):
         super().__init__()
-        self.db = db
 
     def compose(self):
         yield Header()
@@ -79,14 +79,15 @@ class FinanceApp(App):
     def load_transactions(self):
         transactions_list = self.query_one(".transactions-list", DataTable)
         transactions_list.clear()
-        for transaction in self.db.get_all_transactions():
-            transactions_list.add_row(
-                transaction.description,
-                transaction.transaction_date,
-                f"{transaction.transaction_value:.2f}",
-                transaction.type,
-                transaction.category.name if transaction.category else "None",
-            )
+        with TransactionDAO() as dao:
+            for transaction in dao.get_all_transactions():
+                transactions_list.add_row(
+                    transaction.description,
+                    transaction.transaction_date,
+                    f"{transaction.transaction_value:.2f}",
+                    transaction.type,
+                    transaction.category.name if transaction.category else "None",
+                )
 
     def action_toggle_dark(self):
         self.theme = (
