@@ -24,7 +24,7 @@ Button {
     width: 100%;
 }
 
-.contacts-list {
+.transactions-list {
     width: 3fr;
     padding: 0 1;
     border: solid green;
