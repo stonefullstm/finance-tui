@@ -1,6 +1,7 @@
 from textual.screen import Screen
 from textual.widgets import Button, Label, Input, Select, Static
 from textual.containers import Grid
+from dao.category_dao import CategoryDAO
 
 
 class InputDialog(Screen):
@@ -33,7 +34,7 @@ class InputDialog(Screen):
             ),
             Label("Category:", classes="label"),
             Select(
-                options=[("Saúde", 1), ("Feira", 2), ("Lazer", 3)],
+                options=self.get_category_options(),
                 classes="input",
                 id="category_id",
             ),
@@ -42,6 +43,11 @@ class InputDialog(Screen):
             Button("Ok", variant="success", id="ok"),
             id="input-dialog",
         )
+
+    def get_category_options(self):
+        with CategoryDAO() as dao:
+            categories = dao.get_all_categories()
+        return [(c.name, c.id) for c in categories]
 
     def on_button_pressed(self, event):
         if event.button.id == "ok":
