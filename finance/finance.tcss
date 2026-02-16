@@ -73,3 +73,17 @@ InputDialog {
 .input {
     column-span: 2;
 }
+
+.category-row {
+    width: 100%;
+    height: auto;
+}
+
+.category-row Select {
+    width: 80%;
+}
+
+.category-row Button {
+    width: 20%;
+    min-width: 5;
+}

@@ -33,8 +33,8 @@ class FinanceApp(App):
         add_button.focus()
         buttons_panel = Vertical(
             add_button,
-            Button("Delete", variant="warning", id="delete"),
             Button("Edit", variant="primary", id="edit"),
+            Button("Delete", variant="warning", id="delete"),
             Static(classes="separator"),
             Button("Clear All", variant="error", id="clear"),
             classes="buttons-panel",

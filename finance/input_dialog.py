@@ -1,7 +1,8 @@
 from textual.screen import Screen
 from textual.widgets import Button, Label, Input, Select, Static
-from textual.containers import Grid
+from textual.containers import Grid, Horizontal
 from dao.category_dao import CategoryDAO
+from finance.category_dialog import CategoryDialog
 
 
 class InputDialog(Screen):
@@ -33,10 +34,14 @@ class InputDialog(Screen):
                 id="type",
             ),
             Label("Category:", classes="label"),
-            Select(
-                options=self.get_category_options(),
-                classes="input",
-                id="category_id",
+            Horizontal(
+                Select(
+                    options=self.get_category_options(),
+                    classes="input",
+                    id="category_id",
+                ),
+                Button("+", variant="primary", id="add_category"),
+                classes="category-row",
             ),
             Static(),
             Button("Cancel", variant="warning", id="cancel"),
@@ -49,8 +54,28 @@ class InputDialog(Screen):
             categories = dao.get_all_categories()
         return [(c.name, c.id) for c in categories]
 
-    def on_button_pressed(self, event):
-        if event.button.id == "ok":
+    def refresh_categories(self):
+        """Atualiza a lista de categorias no Select"""
+        category_select = self.query_one("#category_id", Select)
+        category_select.set_options(self.get_category_options())
+
+    def handle_new_category(self, category_name):
+        """Callback que recebe o nome da categoria do diálogo"""
+        if category_name:
+            # Salva a nova categoria no banco
+            with CategoryDAO() as dao:
+                new_category = dao.create_category(category_name)
+            # Atualiza a lista de categorias
+            self.refresh_categories()
+            # Seleciona a categoria recém-criada
+            category_select = self.query_one("#category_id", Select)
+            category_select.value = new_category.id
+
+    async def on_button_pressed(self, event):
+        if event.button.id == "add_category":
+            # Abre o diálogo de categoria
+            self.app.push_screen(CategoryDialog(), self.handle_new_category)
+        elif event.button.id == "ok":
             description = self.query_one("#description", Input).value
             transaction_date = self.query_one("#transaction_date", Input).value
             transaction_value = self.query_one("#transaction_value", Input).value
@@ -64,7 +89,7 @@ class InputDialog(Screen):
                     "transaction_date": transaction_date,
                     "transaction_value": float(transaction_value),
                     "type": type,
-                    "category_id": category_id
+                    "category_id": category_id,
                 }
             )
         else:
