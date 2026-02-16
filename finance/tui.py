@@ -1,7 +1,17 @@
+from textual import on
 from textual.app import App
 from textual.containers import Grid, Horizontal, Vertical
 from textual.screen import Screen
-from textual.widgets import Button, DataTable, Footer, Header, Input, Label, Static, Select
+from textual.widgets import (
+    Button,
+    DataTable,
+    Footer,
+    Header,
+    Input,
+    Label,
+    Static,
+    Select,
+)
 from dao.transaction_dao import TransactionDAO
 
 
@@ -56,10 +66,11 @@ class InputDialog(Screen):
                 classes="input",
                 id="type",
             ),
+            Label("Category:", classes="label"),
             Select(
                 options=[("Saúde", 1), ("Feira", 2), ("Lazer", 3)],
                 classes="input",
-                id="category",
+                id="category_id",
             ),
             Static(),
             Button("Cancel", variant="warning", id="cancel"),
@@ -73,8 +84,18 @@ class InputDialog(Screen):
             transaction_date = self.query_one("#transaction_date", Input).value
             transaction_value = self.query_one("#transaction_value", Input).value
             type = self.query_one("#type", Select).value
-            category = self.query_one("#category", Select).value
-            self.dismiss((description, transaction_date, transaction_value, type, category))
+            category_id = self.query_one("#category_id", Select).value
+            day, month, year = map(int, transaction_date.split("-"))
+            transaction_date = f"{year:04d}-{month:02d}-{day:02d}"
+            self.dismiss(
+                {
+                    "description": description,
+                    "transaction_date": transaction_date,
+                    "transaction_value": float(transaction_value),
+                    "type": type,
+                    "category_id": category_id
+                }
+            )
         else:
             self.dismiss(())
 
@@ -139,6 +160,16 @@ class FinanceApp(App):
                     transaction.type,
                     transaction.category.name if transaction.category else "None",
                 )
+
+    @on(Button.Pressed, "#add")
+    def action_add(self):
+        def check_transaction(transaction_data):
+            if transaction_data:
+                with TransactionDAO() as dao:
+                    dao.create_transaction(transaction_data)
+                    # dao.load_transactions()
+
+        self.push_screen(InputDialog(), check_transaction)
 
     def action_toggle_dark(self):
         self.theme = (
