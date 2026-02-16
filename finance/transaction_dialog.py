@@ -5,7 +5,7 @@ from dao.category_dao import CategoryDAO
 from finance.category_dialog import CategoryDialog
 
 
-class InputDialog(Screen):
+class TransactionDialog(Screen):
     def compose(self):
         yield Grid(
             Label("Add Transaction", id="title"),

@@ -10,7 +10,7 @@ from textual.widgets import (
 )
 from dao.transaction_dao import TransactionDAO
 from finance.question_dialog import QuestionDialog
-from finance.input_dialog import InputDialog
+from finance.transaction_dialog import TransactionDialog
 
 
 class FinanceApp(App):
@@ -82,7 +82,7 @@ class FinanceApp(App):
                     dao.create_transaction(transaction_data)
                     # dao.load_transactions()
 
-        self.push_screen(InputDialog(), check_transaction)
+        self.push_screen(TransactionDialog(), check_transaction)
 
     def action_toggle_dark(self):
         self.theme = (
