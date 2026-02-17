@@ -65,7 +65,7 @@ class FinanceApp(App):
         transactions_list = self.query_one(".transactions-list", DataTable)
         transactions_list.clear()
         with TransactionDAO() as dao:
-            for transaction in dao.get_all_transactions():
+            for transaction in dao.get_all_transactions(order=True):
                 transactions_list.add_row(
                     transaction.description,
                     transaction.transaction_date,

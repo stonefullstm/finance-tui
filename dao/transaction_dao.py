@@ -26,10 +26,13 @@ class TransactionDAO:
         # Retorna False para propagar exceções (se houver)
         return False
 
-    def get_all_transactions(self) -> List[Transaction]:
+    def get_all_transactions(self, order=False) -> List[Transaction]:
         """Retorna todas as transações"""
         try:
-            transactions = self.session.execute(select(Transaction)).scalars().all()
+            query = select(Transaction)
+            if order:
+                query = query.order_by(Transaction.transaction_date.desc())
+            transactions = self.session.execute(query).scalars().all()
             return transactions
         except SQLAlchemyError as e:
             print(f"Erro ao buscar transações: {e}")
