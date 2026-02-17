@@ -41,7 +41,7 @@ Button {
     height: 1fr;
 }
 
-InputDialog {
+TransactionDialog {
     align: center middle;
 }
 
@@ -58,7 +58,7 @@ InputDialog {
     grid-size: 3 7;
     grid-gutter: 1 1;
     padding: 0 1;
-    width: 50;
+    width: 70;
     height: 30;
     border: solid green;
     background: $surface;
@@ -74,16 +74,79 @@ InputDialog {
     column-span: 2;
 }
 
-.category-row {
-    width: 100%;
+/* Estilo específico para a linha da categoria */
+#category_id {
+    width: 150%;
+}
+
+#add_category {
+    width: 50%;  /* Botão com metade da largura */
+    margin-left: 1;  /* Margem à esquerda para centralizar melhor */
+    min-width: 3;
+}
+
+/* Ajuste para a última linha */
+#cancel, #ok {
+    margin-top: 1;
+}
+
+/* Centraliza e dimensiona o CategoryDialog */
+CategoryDialog {
+    align: center middle;
+}
+
+CategoryDialog > Grid {
+    grid-size: 2 5;
+    grid-gutter: 1 2;
+    grid-rows: auto auto auto 3;
+    padding: 1 2;
+    width: 50;
     height: auto;
+    background: $surface;
+    border: solid green;
 }
 
-.category-row Select {
-    width: 80%;
+/* Título do diálogo */
+CategoryDialog #title {
+    column-span: 2;
+    content-align: center middle;
+    text-style: bold;
+    color: $accent;
+    height: 3;
 }
 
-.category-row Button {
-    width: 20%;
-    min-width: 5;
+/* Labels */
+CategoryDialog .label {
+    column-span: 2;
+    content-align: left middle;
+    height: 1;
+    padding-left: 1;
+}
+
+/* Input */
+CategoryDialog .input {
+    column-span: 2;
+    width: 100%;
+    height: 3;
+}
+
+/* Espaçador entre input e botões */
+CategoryDialog Static {
+    column-span: 2;
+    height: 1;
+}
+
+/* Botões */
+CategoryDialog Button {
+    width: 100%;
+    height: 3;
+}
+
+/* Posiciona botões lado a lado */
+CategoryDialog #cancel {
+    column-span: 1;
+}
+
+CategoryDialog #ok {
+    column-span: 1;
 }
