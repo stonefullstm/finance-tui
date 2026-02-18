@@ -11,6 +11,19 @@ from textual.widgets import (
 from dao.transaction_dao import TransactionDAO
 from finance.question_dialog import QuestionDialog
 from finance.transaction_dialog import TransactionDialog
+import logging
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    handlers=[
+        logging.FileHandler("app.log"),  # Salva no arquivo
+        logging.StreamHandler(),  # Mostra no console
+    ],
+)
+
+# Uso do logger
+logger = logging.getLogger(__name__)
 
 
 class FinanceApp(App):
@@ -72,19 +85,48 @@ class FinanceApp(App):
                     f"{transaction.transaction_value:.2f}",
                     transaction.type,
                     transaction.category.name if transaction.category else "None",
+                    # Armazena o ID da transação como chave da linha
+                    key=transaction.id,
                 )
+
+    def handle_transaction_result(self, result):
+        """Processa o resultado do diálogo (create ou edit)"""
+        if result:  # Se não foi cancelado
+            with TransactionDAO() as dao:
+                if "id" in result:
+                    # Modo edição - atualiza transação existente
+                    dao.update_transaction(
+                        result
+                    )
+                else:
+                    # Modo criação - cria nova transação
+                    dao.create_transaction(
+                        result
+                    )
+
+            # Atualiza a lista de transações na tela
+            self.load_transactions()
 
     @on(Button.Pressed, "#add")
     def action_add(self):
-        def check_transaction(transaction_data):
-            if transaction_data:
-                with TransactionDAO() as dao:
-                    dao.create_transaction(transaction_data)
-                    # dao.load_transactions()
-
-        self.push_screen(TransactionDialog(), check_transaction)
+        self.push_screen(TransactionDialog(), self.handle_transaction_result)
 
     def action_toggle_dark(self):
         self.theme = (
             "textual-dark" if self.theme == "textual-light" else "textual-light"
+        )
+
+    # Quando clicar no botão Edit
+    @on(Button.Pressed, "#edit")
+    def action_edit(self):
+        transactions_list = self.query_one(".transactions-list", DataTable)
+        row_key, _ = transactions_list.coordinate_to_cell_key(
+            transactions_list.cursor_coordinate
+        )
+        logger.info(f"Edit button pressed for transaction ID: {row_key.value}")
+        with TransactionDAO() as dao:
+            transaction = dao.get_transaction_by_id(row_key.value)
+        # Abre o diálogo
+        self.app.push_screen(
+            TransactionDialog(transaction=transaction), self.handle_transaction_result
         )
