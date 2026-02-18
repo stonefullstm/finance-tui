@@ -130,3 +130,24 @@ class FinanceApp(App):
         self.app.push_screen(
             TransactionDialog(transaction=transaction), self.handle_transaction_result
         )
+
+    @on(Button.Pressed, "#delete")
+    def action_delete(self):
+        transactions_list = self.query_one(".transactions-list", DataTable)
+        row_key, _ = transactions_list.coordinate_to_cell_key(
+            transactions_list.cursor_coordinate
+        )
+        logger.info(f"Delete button pressed for transaction ID: {row_key.value}")
+        with TransactionDAO() as dao:
+            transaction = dao.get_transaction_by_id(row_key.value)
+
+        def check_answer(accepted):
+            if accepted:
+                with TransactionDAO() as dao:
+                    dao.delete_transaction(transaction.id)
+                self.load_transactions()
+
+        self.push_screen(
+            QuestionDialog(f"Do you want to delete '{transaction.description}'?"),
+            check_answer,
+        )
