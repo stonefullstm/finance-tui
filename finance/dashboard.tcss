@@ -1,0 +1,17 @@
+Dashboard {
+    align: center middle;
+}
+
+#dashboard-grid {
+    grid-size: 3 2;
+    grid-gutter: 1 1;
+    padding: 1;
+    width: 80;
+    height: 40;
+}
+
+#total-income, #total-expenses, #total-balance {
+    content-align: center middle;
+    text-style: bold;
+    color: $accent;
+}

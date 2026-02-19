@@ -3,6 +3,7 @@ from textual.widgets import Button, Label, Input, Select, Static
 from textual.containers import Grid
 from dao.category_dao import CategoryDAO
 from finance.category_dialog import CategoryDialog
+import datetime
 
 
 class TransactionDialog(Screen):
@@ -22,7 +23,7 @@ class TransactionDialog(Screen):
     def compose(self):
         # Define valores padrão para modo criação
         description = ""
-        transaction_date = ""
+        transaction_date = datetime.date.today().strftime("%d-%m-%Y")
         transaction_value = ""
         type_value = Select.BLANK
         category_value = Select.BLANK
@@ -89,6 +90,7 @@ class TransactionDialog(Screen):
         """Retorna lista de categorias do banco de dados"""
         with CategoryDAO() as dao:
             categories = dao.get_all_categories()
+            categories.sort(key=lambda c: c.name)
         return [(c.name, c.id) for c in categories]
 
     def refresh_categories(self):
@@ -123,6 +125,8 @@ class TransactionDialog(Screen):
             description = self.query_one("#description", Input).value
             transaction_date = self.query_one("#transaction_date", Input).value
             transaction_value = self.query_one("#transaction_value", Input).value
+            # Substitui virgula por ponto para conversão float
+            transaction_value = transaction_value.replace(",", ".")
             type = self.query_one("#type", Select).value
             category_id = self.query_one("#category_id", Select).value
 

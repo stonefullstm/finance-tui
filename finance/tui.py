@@ -9,6 +9,7 @@ from textual.widgets import (
     Static,
 )
 from dao.transaction_dao import TransactionDAO
+from finance.dashboard import Dashboard
 from finance.question_dialog import QuestionDialog
 from finance.transaction_dialog import TransactionDialog
 import logging
@@ -48,6 +49,7 @@ class FinanceApp(App):
             add_button,
             Button("Edit", variant="primary", id="edit"),
             Button("Delete", variant="warning", id="delete"),
+            Button("Dashboard", variant="error", id="dashboard"),
             Static(classes="separator"),
             Button("Clear All", variant="error", id="clear"),
             classes="buttons-panel",
@@ -90,7 +92,7 @@ class FinanceApp(App):
                 transactions_list.add_row(
                     transaction.description,
                     transaction.transaction_date,
-                    f"{transaction.transaction_value:.2f}",
+                    f"{transaction.transaction_value:>10.2f}",
                     transaction.type,
                     transaction.category.name if transaction.category else "None",
                     # Armazena o ID da transação como chave da linha
@@ -155,3 +157,7 @@ class FinanceApp(App):
             QuestionDialog(f"Do you want to delete '{transaction.description}'?"),
             check_answer,
         )
+
+    @on(Button.Pressed, "#dashboard")
+    def action_dashboard(self):
+        self.app.push_screen(Dashboard())

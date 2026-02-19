@@ -105,6 +105,21 @@ class TransactionDAO:
             print(f"Erro ao remover transação: {e}")
             return False
 
+    def get_totals_by_type(self) -> Dict[str, float]:
+        """Retorna o total de receitas e despesas"""
+        try:
+            totals = {"income": 0.0, "expense": 0.0}
+            transactions = self.get_all_transactions()
+            for transaction in transactions:
+                if transaction.type == "Receita":
+                    totals["income"] += transaction.transaction_value
+                elif transaction.type == "Despesa":
+                    totals["expense"] += transaction.transaction_value
+            return totals
+        except SQLAlchemyError as e:
+            print(f"Erro ao calcular totais: {e}")
+            return {"income": 0.0, "expense": 0.0}
+
     def close(self):
         """Fecha a sessão do banco de dados"""
         if self.session:
