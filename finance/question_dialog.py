@@ -4,6 +4,8 @@ from textual.containers import Grid
 
 
 class QuestionDialog(Screen):
+    CSS_PATH = "question_dialog.tcss"
+
     def __init__(self, message, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.message = message

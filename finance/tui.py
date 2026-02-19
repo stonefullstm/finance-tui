@@ -1,6 +1,6 @@
 from textual import on
 from textual.app import App
-from textual.containers import Horizontal, Vertical
+from textual.containers import Horizontal, Vertical, Container
 from textual.widgets import (
     Button,
     DataTable,
@@ -52,14 +52,22 @@ class FinanceApp(App):
             Button("Clear All", variant="error", id="clear"),
             classes="buttons-panel",
         )
+        # Container com DataTable
         transactions_list = DataTable(classes="transactions-list")
-        transactions_list.focus()
+        transactions_list.cursor_type = "row"
+        transactions_list.zebra_stripes = True
         transactions_list.add_columns(
             "Description", "Date", "Value", "Type", "Category"
         )
-        transactions_list.cursor_type = "row"
-        transactions_list.zebra_stripes = True
-        yield Horizontal(buttons_panel, transactions_list, classes="main-panel")
+
+        # Container com título definido aqui
+        transactions_container = Container(
+            transactions_list,
+            classes="transactions-container",
+        )
+        transactions_container.border_title = "Transactions"  # Define o título aqui!
+
+        yield Horizontal(buttons_panel, transactions_container, classes="main-panel")
         yield Footer()
 
     def on_mount(self):
@@ -95,14 +103,10 @@ class FinanceApp(App):
             with TransactionDAO() as dao:
                 if "id" in result:
                     # Modo edição - atualiza transação existente
-                    dao.update_transaction(
-                        result
-                    )
+                    dao.update_transaction(result)
                 else:
                     # Modo criação - cria nova transação
-                    dao.create_transaction(
-                        result
-                    )
+                    dao.create_transaction(result)
 
             # Atualiza a lista de transações na tela
             self.load_transactions()

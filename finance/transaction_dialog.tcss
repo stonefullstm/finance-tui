@@ -1,0 +1,49 @@
+TransactionDialog {
+    align: center middle;
+}
+
+#title {
+    column-span: 3;
+    height: 1fr;
+    width: 1fr;
+    content-align: center middle;
+    color: green;
+    text-style: bold;
+}
+
+#input-dialog {
+    grid-size: 3 7;
+    grid-gutter: 1 1;
+    padding: 0 1;
+    width: 70;
+    height: 30;
+    border: solid green;
+    background: $surface;
+}
+
+.label {
+    height: 1fr;
+    width: 1fr;
+    content-align: right middle;
+}
+
+.input {
+    column-span: 2;
+}
+
+/* Estilo específico para a linha da categoria */
+#category_id {
+    width: 150%;
+}
+
+#add_category {
+    width: 50%;  /* Botão com metade da largura */
+    margin-left: 1;  /* Margem à esquerda para centralizar melhor */
+    min-width: 3;
+}
+
+/* Ajuste para a última linha  
+#cancel, #ok {
+    margin-top: 1;
+}
+*/

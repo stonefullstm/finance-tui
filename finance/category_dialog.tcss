@@ -1,0 +1,61 @@
+/* Centraliza e dimensiona o CategoryDialog */
+CategoryDialog {
+    align: center middle;
+}
+
+CategoryDialog > Grid {
+    grid-size: 2 4;  /* 4 linhas, não 5 */
+    grid-gutter: 1 2;
+    grid-rows: auto auto auto 3;  /* Última linha com altura 3 para botões */
+    padding: 1 2;
+    width: 50;
+    height: auto;
+    background: $surface;
+    border: solid $primary;
+}
+
+/* Título do diálogo */
+CategoryDialog #title {
+    column-span: 2;
+    content-align: center middle;
+    text-style: bold;
+    color: $accent;
+    height: 3;
+}
+
+/* Labels */
+CategoryDialog .label {
+    column-span: 2;
+    content-align: left middle;
+    height: auto;
+    padding-left: 1;
+}
+
+/* Input */
+CategoryDialog .input {
+    column-span: 2;
+    width: 100%;
+    height: 3;
+}
+
+/* Espaçador entre input e botões */
+CategoryDialog Static {
+    column-span: 2;
+    height: 1;
+}
+
+/* Botões com altura fixa */
+CategoryDialog Button {
+    width: 100%;
+    height: 3;  /* Altura fixa, não auto */
+    min-height: 3;
+}
+
+/* Posiciona botões lado a lado */
+CategoryDialog #cancel {
+    column-span: 1;
+}
+
+CategoryDialog #ok {
+    column-span: 1;
+}

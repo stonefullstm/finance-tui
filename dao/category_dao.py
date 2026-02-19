@@ -94,6 +94,21 @@ class CategoryDAO:
             print(f"Erro ao remover categoria: {e}")
             return False
 
+    def get_category_by_name(self, name: str) -> Optional[Category]:
+        """Retorna uma categoria pelo nome"""
+        try:
+            category = (
+                self.session.execute(
+                    select(Category).where(Category.name == name)
+                )
+                .scalars()
+                .first()
+            )
+            return category
+        except SQLAlchemyError as e:
+            print(f"Erro ao buscar categoria por nome: {e}")
+            return None
+
     def close(self):
         """Fecha a sessão do banco de dados"""
         if self.session:

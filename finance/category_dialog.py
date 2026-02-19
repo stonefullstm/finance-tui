@@ -1,10 +1,11 @@
 from textual.screen import Screen
-from textual.widgets import Button, Label, Input, Static
+from textual.widgets import Button, Label, Input
 from textual.containers import Grid
 
 
 class CategoryDialog(Screen):
     """Diálogo para adicionar uma nova categoria"""
+    CSS_PATH = "category_dialog.tcss"
 
     def compose(self):
         yield Grid(
@@ -15,7 +16,7 @@ class CategoryDialog(Screen):
                 classes="input",
                 id="category_name",
             ),
-            Static(),
+            # Static(),
             Button("Cancel", variant="warning", id="cancel"),
             Button("Save", variant="success", id="ok"),
             id="category-dialog",
