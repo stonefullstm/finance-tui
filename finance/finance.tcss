@@ -1,7 +1,55 @@
-
-.transactions-list {
-    width: 3fr;
+Screen {
+    layout: vertical;
+}
+/* Barra de KPIs em cima */
+.kpi-bar {
+    height: 6;            /* altura fixa, não 1fr */
+    width: 100%;
     padding: 0 1;
+
+    background: $surface;
+    border: heavy $primary;
+    border-title-align: left;
+    border-title-style: bold;
+    border-title-color: $accent;
+}
+
+/* Cada caixinha de KPI */
+.kpi-box {
+    width: 1fr;           /* divide igualmente o espaço horizontal */
+    align: center middle;
+    padding: 0 1;
+}
+
+/* Digits ocupando bem o espaço vertical do box */
+.kpi-box Digits {
+    height: 3;
+    align: center middle;
+}
+
+/* Label embaixo do Digits */
+ .kpi-box .kpi-label {
+    height: 1;
+    background: $boost;
+    content-align: center middle;
+}
+
+/* Cores opcionais por tipo */
+.kpi-box.income Digits {
+    color: $success;
+}
+
+.kpi-box.expense Digits {
+    color: $error;
+}
+
+.kpi-box.balance Digits {
+    color: $accent;
+}
+.transactions-list {
+    width: 2fr;
+    padding: 0 1;
+    height: 50%;
     /*border: solid green;*/
 }
 
@@ -18,10 +66,17 @@
 
 .transactions-container {
     width: 1fr;
-    height: 100%;
+    height: 50%;
     border: heavy $primary;
     border-title-align: center;
     border-title-color: $accent;
     border-title-background: $surface;
     border-title-style: bold;
 }
+
+/* Botões + tabela como você já tinha ajustado */
+.main-panel {
+    width: 100%;
+    height: 1fr;
+}
+

@@ -7,6 +7,7 @@ from textual.widgets import (
     Footer,
     Header,
     Static,
+    Digits,
 )
 from dao.transaction_dao import TransactionDAO
 from finance.dashboard import Dashboard
@@ -43,6 +44,25 @@ class FinanceApp(App):
 
     def compose(self):
         yield Header()
+        # Barra de KPIs
+        yield Horizontal(
+            Vertical(
+                Digits("0", id="kpi_income_value"),
+                Static("Receitas", classes="kpi-label"),
+                classes="kpi-box income",
+            ),
+            Vertical(
+                Digits("0", id="kpi_expense_value"),
+                Static("Despesas", classes="kpi-label"),
+                classes="kpi-box expense",
+            ),
+            Vertical(
+                Digits("0", id="kpi_balance_value"),
+                Static("Saldo", classes="kpi-label"),
+                classes="kpi-box balance",
+            ),
+            classes="kpi-bar",
+        )
         add_button = Button("Add", variant="success", id="add")
         add_button.focus()
         buttons_panel = Vertical(
@@ -69,13 +89,18 @@ class FinanceApp(App):
         )
         transactions_container.border_title = "Transactions"  # Define o título aqui!
 
-        yield Horizontal(buttons_panel, transactions_container, classes="main-panel")
+        yield Horizontal(
+            buttons_panel,
+            transactions_container,
+            classes="main-panel",
+        )
         yield Footer()
 
     def on_mount(self):
         self.title = "Personal Finance Manager"
         self.sub_title = "A Finance Manager App With Textual & Python"
         self.load_transactions()
+        self.update_kpis()
 
     def action_request_quit(self):
         def check_answer(accepted):
@@ -88,7 +113,8 @@ class FinanceApp(App):
         transactions_list = self.query_one(".transactions-list", DataTable)
         transactions_list.clear()
         with TransactionDAO() as dao:
-            for transaction in dao.get_all_transactions(order=True):
+            transactions = list(dao.get_all_transactions(order=True))
+            for transaction in transactions:
                 transactions_list.add_row(
                     transaction.description,
                     transaction.transaction_date,
@@ -98,6 +124,8 @@ class FinanceApp(App):
                     # Armazena o ID da transação como chave da linha
                     key=transaction.id,
                 )
+        self._last_transactions = transactions  # guarda para cálculo
+        self.update_kpis()
 
     def handle_transaction_result(self, result):
         """Processa o resultado do diálogo (create ou edit)"""
@@ -112,6 +140,23 @@ class FinanceApp(App):
 
             # Atualiza a lista de transações na tela
             self.load_transactions()
+
+    def update_kpis(self):
+        income = sum(
+            t.transaction_value for t in self._last_transactions if t.type == "Receita"
+        )
+        expense = sum(
+            t.transaction_value for t in self._last_transactions if t.type == "Despesa"
+        )
+        balance = income - expense
+
+        kpi_income = self.query_one("#kpi_income_value", Digits)
+        kpi_expense = self.query_one("#kpi_expense_value", Digits)
+        kpi_balance = self.query_one("#kpi_balance_value", Digits)
+
+        kpi_income.update(f"{income:,.2f}")
+        kpi_expense.update(f"{expense:,.2f}")
+        kpi_balance.update(f"{balance:,.2f}")
 
     @on(Button.Pressed, "#add")
     def action_add(self):
