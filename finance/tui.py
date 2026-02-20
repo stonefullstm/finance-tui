@@ -10,6 +10,7 @@ from textual.widgets import (
     Static,
     Digits,
 )
+from dao.category_dao import CategoryDAO
 from dao.transaction_dao import TransactionDAO
 from finance.question_dialog import QuestionDialog
 from finance.transaction_dialog import TransactionDialog
@@ -48,17 +49,17 @@ class FinanceApp(App):
         yield Horizontal(
             Vertical(
                 Digits("0", id="kpi_income_value"),
-                Static("Receitas", classes="kpi-label"),
+                Static("Incomes", classes="kpi-label"),
                 classes="kpi-box income",
             ),
             Vertical(
                 Digits("0", id="kpi_expense_value"),
-                Static("Despesas", classes="kpi-label"),
+                Static("Expenses", classes="kpi-label"),
                 classes="kpi-box expense",
             ),
             Vertical(
                 Digits("0", id="kpi_balance_value"),
-                Static("Saldo", classes="kpi-label"),
+                Static("Balance", classes="kpi-label"),
                 classes="kpi-box balance",
             ),
             classes="kpi-bar",
@@ -80,7 +81,19 @@ class FinanceApp(App):
         transactions_list.add_columns(
             "Description", "Date", "Value", "Type", "Category"
         )
-
+        # DataTable de categorias
+        category_list_table = DataTable(id="category_list_table")
+        category_list_table.cursor_type = "row"
+        category_list_table.zebra_stripes = True
+        category_list_table.add_columns(
+            "Name",
+        )
+        # Container para a lista de categorias (ainda sem conteúdo)
+        category_list = Container(
+            category_list_table,
+            id="category_list_container",
+        )
+        category_list.border_title = "Categories"  # Define o título aqui!
         # Container com título definido aqui
         transactions_container = Container(
             transactions_list,
@@ -88,13 +101,31 @@ class FinanceApp(App):
         )
         transactions_container.border_title = "Transactions"  # Define o título aqui!
 
-        graphics = Horizontal(
+        data_view = Horizontal(
+            transactions_container,
+            category_list,
+            classes="data-view",
+        )
+
+        expense_container = Container(
             PlotWidget(id="expense_plot"),
+            classes="expense-container",
+        )
+        expense_container.border_title = "Expenses by Month"
+
+        category_container = Container(
             PlotWidget(id="category_plot"),
-            classes="dashboard-graphics",
+            classes="category-container",
+        )
+        category_container.border_title = "Expenses by Category"
+
+        graphics = Horizontal(
+            expense_container,
+            category_container,
+            classes="graphics-container",
         )
         dashboard_container = Vertical(
-            transactions_container,
+            data_view,
             graphics,
             classes="dashboard-container",
         )
@@ -110,6 +141,7 @@ class FinanceApp(App):
         self.title = "Personal Finance Manager"
         self.sub_title = "A Finance Manager App With Textual & Python"
         self.load_transactions()
+        self.load_categories()
         self.update_kpis()
         self.create_graphic()
 
@@ -137,6 +169,17 @@ class FinanceApp(App):
                 )
         self._last_transactions = transactions  # guarda para cálculo
         self.update_kpis()
+
+    def load_categories(self):
+        category_list_table = self.query_one("#category_list_table", DataTable)
+        category_list_table.clear()
+        with CategoryDAO() as dao:
+            categories = sorted(list(dao.get_all_categories()), key=lambda c: c.name)
+            for category in categories:
+                category_list_table.add_row(
+                    category.name,
+                    key=category.id,
+                )
 
     def handle_transaction_result(self, result):
         """Processa o resultado do diálogo (create ou edit)"""
@@ -176,15 +219,59 @@ class FinanceApp(App):
         # income_values = [totals_by_month[month]["income"] for month in months]
         expense_values = [totals_by_month[month]["expense"] for month in months]
         plot = self.query_one("#expense_plot", PlotWidget)
-        # Aqui você pode criar um gráfico usando os dados das transações
-        # Exemplo: plot.plot(...)
         plot.clear()
-        # Exemplo de gráfico simples (substitua pelos seus dados reais)
         plot.bar(
             months,
             expense_values,
-            bar_style=["red", "blue", "green"],
+            bar_style=["red", "blue", "green", "yellow", "magenta", "cyan"],
             label="Expense Data",
+        )
+
+    def update_category_graphic(self):
+        if not hasattr(self, "_totals_category") or not self._totals_category:
+            return
+
+        # # Agrupa as transações por mês
+        # totals_by_month = {}
+        # for transaction in self._totals_category:
+        #     month_key = transaction.transaction_date.strftime("%Y-%m")
+        #     if month_key not in totals_by_month:
+        #         totals_by_month[month_key] = 0
+        #     totals_by_month[month_key] += transaction.transaction_value
+
+        # months = sorted(totals_by_month.keys())
+        # values = [totals_by_month[month] for month in months]
+
+        # plot = self.query_one("#category_plot", PlotWidget)
+        # plot.clear()
+        # plot.bar(
+        #     months,
+        #     values,
+        #     bar_style=["yellow", "magenta", "cyan", "red", "blue", "green"],
+        #     label="Category Expense Data",
+        # )
+            # Agrupa por mês
+        totals_by_month: dict[str, float] = {}
+        for transaction in self._totals_category:
+            month_key = transaction.transaction_date.strftime("%Y-%m")
+            totals_by_month.setdefault(month_key, 0.0)
+            totals_by_month[month_key] += transaction.transaction_value
+
+        months = sorted(totals_by_month.keys())
+        values = [totals_by_month[month] for month in months]
+
+        # Eixo X numérico: 0, 1, 2, ...
+        x = list(range(len(months)))
+
+        plot = self.query_one("#category_plot", PlotWidget)
+        plot.clear()
+
+        # Gráfico de linha
+        plot.plot(
+            x,
+            values,
+            line_style="green",
+            label="Category Expense Data",
         )
 
     @on(Button.Pressed, "#add")
@@ -203,7 +290,6 @@ class FinanceApp(App):
         row_key, _ = transactions_list.coordinate_to_cell_key(
             transactions_list.cursor_coordinate
         )
-        logger.info(f"Edit button pressed for transaction ID: {row_key.value}")
         with TransactionDAO() as dao:
             transaction = dao.get_transaction_by_id(row_key.value)
         # Abre o diálogo
@@ -231,3 +317,10 @@ class FinanceApp(App):
             QuestionDialog(f"Do you want to delete '{transaction.description}'?"),
             check_answer,
         )
+
+    @on(DataTable.RowSelected, "#category_list_table")
+    def handle_category_selected(self, event: DataTable.RowSelected):
+        category_id = int(event.row_key.value)
+        with TransactionDAO() as dao:
+            self._totals_category = dao.get_transactions_by_category(category_id)
+        self.update_category_graphic()

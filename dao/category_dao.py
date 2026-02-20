@@ -98,9 +98,7 @@ class CategoryDAO:
         """Retorna uma categoria pelo nome"""
         try:
             category = (
-                self.session.execute(
-                    select(Category).where(Category.name == name)
-                )
+                self.session.execute(select(Category).where(Category.name == name))
                 .scalars()
                 .first()
             )

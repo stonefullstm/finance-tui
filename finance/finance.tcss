@@ -65,8 +65,18 @@ Screen {
 }
 
 .transactions-container {
-    width: 1fr;
-    height: 40%;
+    width: 60%;
+    height: 100%;
+    border: heavy $primary;
+    border-title-align: center;
+    border-title-color: $accent;
+    border-title-background: $surface;
+    border-title-style: bold;
+}
+
+#category_list_container {
+    width: 40%;
+    height: 100%;
     border: heavy $primary;
     border-title-align: center;
     border-title-color: $accent;
@@ -81,11 +91,21 @@ Screen {
 }
 
 #expense_plot {
-    height: 100%;
-    width: 50%;
+    height: 120%;
+    width: 100%;
 }
 
 #category_plot {
-    height: 100%;
+    height: 120%;
+    width: 100%;
+}
+
+.expense-container, .category-container {
     width: 50%;
+    height: 100%;
+    border: heavy $primary;
+    border-title-align: center;
+    border-title-color: $accent;
+    border-title-background: $surface;
+    border-title-style: bold;
 }

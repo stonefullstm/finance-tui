@@ -138,6 +138,20 @@ class TransactionDAO:
             print(f"Erro ao calcular totais por mês: {e}")
             return {}
 
+    def get_transactions_by_category(self, category_id: int) -> List[Transaction]:
+        """Retorna as transações de uma categoria específica"""
+        try:
+            query = (
+                select(Transaction)
+                .where(Transaction.category_id == category_id)
+                .order_by(Transaction.transaction_date.desc())
+            )
+            transactions = self.session.execute(query).scalars().all()
+            return transactions
+        except SQLAlchemyError as e:
+            print(f"Erro ao buscar transações por categoria: {e}")
+            return []
+
     def close(self):
         """Fecha a sessão do banco de dados"""
         if self.session:

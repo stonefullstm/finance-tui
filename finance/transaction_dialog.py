@@ -8,6 +8,7 @@ import datetime
 
 class TransactionDialog(Screen):
     """Diálogo para adicionar ou editar transação"""
+
     CSS_PATH = "transaction_dialog.tcss"
 
     def __init__(self, transaction=None, *args, **kwargs):

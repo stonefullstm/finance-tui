@@ -5,6 +5,7 @@ from textual.containers import Grid
 
 class CategoryDialog(Screen):
     """Diálogo para adicionar uma nova categoria"""
+
     CSS_PATH = "category_dialog.tcss"
 
     def compose(self):
