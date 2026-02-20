@@ -2,6 +2,10 @@
 
 Um gerenciador de finanças pessoais com interface textual (TUI) construído em Python usando o framework **Textual** e banco de dados **Firebird**.
 
+<p align="center">
+<img src="https://img.shields.io/badge/STATUS-EM DESENVOLVIMENTO-blue"/>
+</p>
+
 ## 📋 Características
 
 - 🎯 **Interface TUI Intuitiva** - Aplicação de terminal moderna e responsiva
@@ -77,6 +81,8 @@ tui-finance/
 ```
 
 ## 🎮 Como Usar
+
+<img src="images/main-screen.png" alt="main screen"/>
 
 ### Navegação Básica
 
