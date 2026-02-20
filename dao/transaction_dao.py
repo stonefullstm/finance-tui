@@ -120,6 +120,24 @@ class TransactionDAO:
             print(f"Erro ao calcular totais: {e}")
             return {"income": 0.0, "expense": 0.0}
 
+    def get_totals_by_month(self) -> Dict[str, Dict[str, float]]:
+        """Retorna o total de receitas e despesas por mês"""
+        try:
+            totals = {}
+            transactions = self.get_all_transactions()
+            for transaction in transactions:
+                month = transaction.transaction_date.strftime("%Y-%m")
+                if month not in totals:
+                    totals[month] = {"income": 0.0, "expense": 0.0}
+                if transaction.type == "Receita":
+                    totals[month]["income"] += transaction.transaction_value
+                elif transaction.type == "Despesa":
+                    totals[month]["expense"] += transaction.transaction_value
+            return totals
+        except SQLAlchemyError as e:
+            print(f"Erro ao calcular totais por mês: {e}")
+            return {}
+
     def close(self):
         """Fecha a sessão do banco de dados"""
         if self.session:

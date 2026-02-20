@@ -170,12 +170,22 @@ class FinanceApp(App):
         kpi_balance.update(f"R$ {balance:,.2f}")
 
     def create_graphic(self):
+        with TransactionDAO() as dao:
+            totals_by_month = dao.get_totals_by_month()
+        months = sorted(totals_by_month.keys())
+        # income_values = [totals_by_month[month]["income"] for month in months]
+        expense_values = [totals_by_month[month]["expense"] for month in months]
         plot = self.query_one("#expense_plot", PlotWidget)
         # Aqui você pode criar um gráfico usando os dados das transações
         # Exemplo: plot.plot(...)
         plot.clear()
         # Exemplo de gráfico simples (substitua pelos seus dados reais)
-        plot.plot([1, 2, 3], [10, 20, 15], label="Example Data")
+        plot.bar(
+            months,
+            expense_values,
+            bar_style=["red", "blue", "green"],
+            label="Expense Data",
+        )
 
     @on(Button.Pressed, "#add")
     def action_add(self):
