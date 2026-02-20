@@ -24,7 +24,7 @@ Screen {
 /* Digits ocupando bem o espaço vertical do box */
 .kpi-box Digits {
     height: 3;
-    align: center middle;
+    text-align: right;
 }
 
 /* Label embaixo do Digits */
@@ -49,7 +49,7 @@ Screen {
 .transactions-list {
     width: 2fr;
     padding: 0 1;
-    height: 50%;
+    height: 100%;
     /*border: solid green;*/
 }
 
@@ -57,7 +57,7 @@ Screen {
     align: center top;
     padding: 0 1;
     width: auto;
-    border: solid red;
+    border: heavy solid red;
 }
 
 .separator {
@@ -66,7 +66,7 @@ Screen {
 
 .transactions-container {
     width: 1fr;
-    height: 50%;
+    height: 40%;
     border: heavy $primary;
     border-title-align: center;
     border-title-color: $accent;
@@ -80,3 +80,12 @@ Screen {
     height: 1fr;
 }
 
+#expense_plot {
+    height: 100%;
+    width: 50%;
+}
+
+#category_plot {
+    height: 100%;
+    width: 50%;
+}

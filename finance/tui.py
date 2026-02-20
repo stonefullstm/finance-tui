@@ -1,6 +1,7 @@
 from textual import on
 from textual.app import App
 from textual.containers import Horizontal, Vertical, Container
+from textual_plot import PlotWidget
 from textual.widgets import (
     Button,
     DataTable,
@@ -10,7 +11,6 @@ from textual.widgets import (
     Digits,
 )
 from dao.transaction_dao import TransactionDAO
-from finance.dashboard import Dashboard
 from finance.question_dialog import QuestionDialog
 from finance.transaction_dialog import TransactionDialog
 import logging
@@ -69,7 +69,6 @@ class FinanceApp(App):
             add_button,
             Button("Edit", variant="primary", id="edit"),
             Button("Delete", variant="warning", id="delete"),
-            Button("Dashboard", variant="error", id="dashboard"),
             Static(classes="separator"),
             Button("Clear All", variant="error", id="clear"),
             classes="buttons-panel",
@@ -89,9 +88,20 @@ class FinanceApp(App):
         )
         transactions_container.border_title = "Transactions"  # Define o título aqui!
 
+        graphics = Horizontal(
+            PlotWidget(id="expense_plot"),
+            PlotWidget(id="category_plot"),
+            classes="dashboard-graphics",
+        )
+        dashboard_container = Vertical(
+            transactions_container,
+            graphics,
+            classes="dashboard-container",
+        )
+
         yield Horizontal(
             buttons_panel,
-            transactions_container,
+            dashboard_container,
             classes="main-panel",
         )
         yield Footer()
@@ -101,6 +111,7 @@ class FinanceApp(App):
         self.sub_title = "A Finance Manager App With Textual & Python"
         self.load_transactions()
         self.update_kpis()
+        self.create_graphic()
 
     def action_request_quit(self):
         def check_answer(accepted):
@@ -154,9 +165,17 @@ class FinanceApp(App):
         kpi_expense = self.query_one("#kpi_expense_value", Digits)
         kpi_balance = self.query_one("#kpi_balance_value", Digits)
 
-        kpi_income.update(f"{income:,.2f}")
-        kpi_expense.update(f"{expense:,.2f}")
-        kpi_balance.update(f"{balance:,.2f}")
+        kpi_income.update(f"R$ {income:,.2f}")
+        kpi_expense.update(f"R$ {expense:,.2f}")
+        kpi_balance.update(f"R$ {balance:,.2f}")
+
+    def create_graphic(self):
+        plot = self.query_one("#expense_plot", PlotWidget)
+        # Aqui você pode criar um gráfico usando os dados das transações
+        # Exemplo: plot.plot(...)
+        plot.clear()
+        # Exemplo de gráfico simples (substitua pelos seus dados reais)
+        plot.plot([1, 2, 3], [10, 20, 15], label="Example Data")
 
     @on(Button.Pressed, "#add")
     def action_add(self):
@@ -202,7 +221,3 @@ class FinanceApp(App):
             QuestionDialog(f"Do you want to delete '{transaction.description}'?"),
             check_answer,
         )
-
-    @on(Button.Pressed, "#dashboard")
-    def action_dashboard(self):
-        self.app.push_screen(Dashboard())
