@@ -1,3 +1,8 @@
+aiohappyeyeballs==2.6.1
+aiohttp==3.13.3
+aiohttp-jinja2==1.6
+aiosignal==1.4.0
+attrs==25.4.0
 black==23.7.0
 cfgv==3.5.0
 click==8.3.1
@@ -8,15 +13,20 @@ filelock==3.23.0
 firebird-base==2.0.2
 firebird-driver==2.0.2
 flake8==6.0.0
+frozenlist==1.8.0
 greenlet==3.3.1
 identify==2.6.16
+idna==3.11
 iniconfig==2.3.0
 isort==5.12.0
+Jinja2==3.1.6
 linkify-it-py==2.0.3
 markdown-it-py==4.0.0
+MarkupSafe==3.0.3
 mccabe==0.7.0
 mdit-py-plugins==0.5.0
 mdurl==0.1.2
+multidict==6.7.1
 mypy==1.3.0
 mypy_extensions==1.1.0
 nodeenv==1.10.0
@@ -27,6 +37,7 @@ platformdirs==4.7.0
 plotext==5.3.2
 pluggy==1.6.0
 pre-commit==3.3.3
+propcache==0.4.1
 protobuf==5.29.6
 pycodestyle==2.10.0
 pyflakes==3.0.1
@@ -45,6 +56,8 @@ sqlalchemy-firebird==2.1
 textual==7.5.0
 textual-hires-canvas==0.14.0
 textual-plot==0.10.1
+textual-serve==1.1.3
 typing_extensions==4.15.0
 uc-micro-py==1.0.3
 virtualenv==20.36.1
+yarl==1.22.0
