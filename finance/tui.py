@@ -48,17 +48,17 @@ class FinanceApp(App):
         # Barra de KPIs
         yield Horizontal(
             Vertical(
-                Digits("0", id="kpi_income_value"),
+                Digits("0", id="kpi-income-value"),
                 Static("Incomes", classes="kpi-label"),
                 classes="kpi-box income",
             ),
             Vertical(
-                Digits("0", id="kpi_expense_value"),
+                Digits("0", id="kpi-expense-value"),
                 Static("Expenses", classes="kpi-label"),
                 classes="kpi-box expense",
             ),
             Vertical(
-                Digits("0", id="kpi_balance_value"),
+                Digits("0", id="kpi-balance-value"),
                 Static("Balance", classes="kpi-label"),
                 classes="kpi-box balance",
             ),
@@ -82,7 +82,7 @@ class FinanceApp(App):
             "Description", "Date", "Value", "Type", "Category"
         )
         # DataTable de categorias
-        category_list_table = DataTable(id="category_list_table")
+        category_list_table = DataTable(id="category-list-table")
         category_list_table.cursor_type = "row"
         category_list_table.zebra_stripes = True
         category_list_table.add_columns(
@@ -91,7 +91,7 @@ class FinanceApp(App):
         # Container para a lista de categorias (ainda sem conteúdo)
         category_list = Container(
             category_list_table,
-            id="category_list_container",
+            id="category-list-container",
         )
         category_list.border_title = "Categories"  # Define o título aqui!
         # Container com título definido aqui
@@ -108,13 +108,13 @@ class FinanceApp(App):
         )
 
         expense_container = Container(
-            PlotWidget(id="expense_plot"),
+            PlotWidget(id="expense-plot"),
             classes="expense-container",
         )
         expense_container.border_title = "Expenses by Month"
 
         category_container = Container(
-            PlotWidget(id="category_plot"),
+            PlotWidget(id="category-plot"),
             classes="category-container",
         )
         category_container.border_title = "Expenses by Category"
@@ -171,7 +171,7 @@ class FinanceApp(App):
         self.update_kpis()
 
     def load_categories(self):
-        category_list_table = self.query_one("#category_list_table", DataTable)
+        category_list_table = self.query_one("#category-list-table", DataTable)
         category_list_table.clear()
         with CategoryDAO() as dao:
             categories = sorted(list(dao.get_all_categories()), key=lambda c: c.name)
@@ -204,9 +204,9 @@ class FinanceApp(App):
         )
         balance = income - expense
 
-        kpi_income = self.query_one("#kpi_income_value", Digits)
-        kpi_expense = self.query_one("#kpi_expense_value", Digits)
-        kpi_balance = self.query_one("#kpi_balance_value", Digits)
+        kpi_income = self.query_one("#kpi-income-value", Digits)
+        kpi_expense = self.query_one("#kpi-expense-value", Digits)
+        kpi_balance = self.query_one("#kpi-balance-value", Digits)
 
         kpi_income.update(f"R$ {income:,.2f}")
         kpi_expense.update(f"R$ {expense:,.2f}")
@@ -218,7 +218,7 @@ class FinanceApp(App):
         months = sorted(totals_by_month.keys())
         # income_values = [totals_by_month[month]["income"] for month in months]
         expense_values = [totals_by_month[month]["expense"] for month in months]
-        plot = self.query_one("#expense_plot", PlotWidget)
+        plot = self.query_one("#expense-plot", PlotWidget)
         plot.clear()
         plot.bar(
             months,
@@ -231,26 +231,6 @@ class FinanceApp(App):
         if not hasattr(self, "_totals_category") or not self._totals_category:
             return
 
-        # # Agrupa as transações por mês
-        # totals_by_month = {}
-        # for transaction in self._totals_category:
-        #     month_key = transaction.transaction_date.strftime("%Y-%m")
-        #     if month_key not in totals_by_month:
-        #         totals_by_month[month_key] = 0
-        #     totals_by_month[month_key] += transaction.transaction_value
-
-        # months = sorted(totals_by_month.keys())
-        # values = [totals_by_month[month] for month in months]
-
-        # plot = self.query_one("#category_plot", PlotWidget)
-        # plot.clear()
-        # plot.bar(
-        #     months,
-        #     values,
-        #     bar_style=["yellow", "magenta", "cyan", "red", "blue", "green"],
-        #     label="Category Expense Data",
-        # )
-            # Agrupa por mês
         totals_by_month: dict[str, float] = {}
         for transaction in self._totals_category:
             month_key = transaction.transaction_date.strftime("%Y-%m")
@@ -263,7 +243,7 @@ class FinanceApp(App):
         # Eixo X numérico: 0, 1, 2, ...
         x = list(range(len(months)))
 
-        plot = self.query_one("#category_plot", PlotWidget)
+        plot = self.query_one("#category-plot", PlotWidget)
         plot.clear()
 
         # Gráfico de linha
@@ -318,7 +298,7 @@ class FinanceApp(App):
             check_answer,
         )
 
-    @on(DataTable.RowSelected, "#category_list_table")
+    @on(DataTable.RowSelected, "#category-list-table")
     def handle_category_selected(self, event: DataTable.RowSelected):
         category_id = int(event.row_key.value)
         with TransactionDAO() as dao:

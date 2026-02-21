@@ -36,7 +36,7 @@ TransactionDialog {
     width: 150%;
 }
 
-#add_category {
+#add-category {
     width: 50%;  /* Botão com metade da largura */
     margin-left: 1;  /* Margem à esquerda para centralizar melhor */
     min-width: 3;

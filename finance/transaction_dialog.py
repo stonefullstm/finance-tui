@@ -58,14 +58,14 @@ class TransactionDialog(Screen):
                 placeholder="Transaction Date (DD-MM-YYYY)",
                 value=transaction_date,
                 classes="input",
-                id="transaction_date",
+                id="transaction-date",
             ),
             Label("Value:", classes="label"),
             Input(
                 placeholder="Transaction Value",
                 value=transaction_value,
                 classes="input",
-                id="transaction_value",
+                id="transaction-value",
             ),
             Label("Type:", classes="label"),
             Select(
@@ -78,9 +78,9 @@ class TransactionDialog(Screen):
             Select(
                 options=self.get_category_options(),
                 value=category_value,
-                id="category_id",
+                id="category-id",
             ),
-            Button("+", variant="primary", id="add_category"),
+            Button("+", variant="primary", id="add-category"),
             Static(),
             Button("Cancel", variant="warning", id="cancel"),
             Button(button_label, variant="success", id="ok"),
@@ -96,7 +96,7 @@ class TransactionDialog(Screen):
 
     def refresh_categories(self):
         """Atualiza a lista de categorias no Select mantendo a seleção atual"""
-        category_select = self.query_one("#category_id", Select)
+        category_select = self.query_one("#category-id", Select)
         current_value = category_select.value
         category_select.set_options(self.get_category_options())
         # Tenta manter a seleção anterior
@@ -112,24 +112,24 @@ class TransactionDialog(Screen):
                 new_category = dao.create_category(category_name)
             self.refresh_categories()
             # Seleciona automaticamente a categoria recém-criada
-            category_select = self.query_one("#category_id", Select)
+            category_select = self.query_one("#category-id", Select)
             category_select.value = new_category.id
 
     def on_button_pressed(self, event):
         """Manipula cliques nos botões"""
-        if event.button.id == "add_category":
+        if event.button.id == "add-category":
             # Abre diálogo para criar nova categoria
             self.app.push_screen(CategoryDialog(), self.handle_new_category)
 
         elif event.button.id == "ok":
             # Coleta os dados do formulário
             description = self.query_one("#description", Input).value
-            transaction_date = self.query_one("#transaction_date", Input).value
-            transaction_value = self.query_one("#transaction_value", Input).value
+            transaction_date = self.query_one("#transaction-date", Input).value
+            transaction_value = self.query_one("#transaction-value", Input).value
             # Substitui virgula por ponto para conversão float
             transaction_value = transaction_value.replace(",", ".")
             type = self.query_one("#type", Select).value
-            category_id = self.query_one("#category_id", Select).value
+            category_id = self.query_one("#category-id", Select).value
 
             # Converte data de DD-MM-YYYY para YYYY-MM-DD
             day, month, year = map(int, transaction_date.split("-"))

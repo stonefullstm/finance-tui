@@ -74,7 +74,7 @@ Screen {
     border-title-style: bold;
 }
 
-#category_list_container {
+#category-list-container {
     width: 40%;
     height: 100%;
     border: heavy $primary;
@@ -90,12 +90,12 @@ Screen {
     height: 1fr;
 }
 
-#expense_plot {
+#expense-plot {
     height: 120%;
     width: 100%;
 }
 
-#category_plot {
+#category-plot {
     height: 120%;
     width: 100%;
 }
