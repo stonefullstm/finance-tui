@@ -32,13 +32,16 @@ TransactionDialog {
 }
 
 /* Estilo específico para a linha da categoria */
-#category_id {
-    width: 150%;
+#category-select-container {
+    column-span: 2;
+}
+
+#category-id {
+    width: 80%;
 }
 
 #add-category {
-    width: 50%;  /* Botão com metade da largura */
-    margin-left: 1;  /* Margem à esquerda para centralizar melhor */
+    width: 20%;  /* Botão com metade da largura */
     min-width: 3;
 }
 

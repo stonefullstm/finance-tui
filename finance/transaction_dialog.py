@@ -1,6 +1,6 @@
 from textual.screen import Screen
 from textual.widgets import Button, Label, Input, Select, Static
-from textual.containers import Grid
+from textual.containers import Grid, Horizontal
 from dao.category_dao import CategoryDAO
 from finance.category_dialog import CategoryDialog
 import datetime
@@ -75,12 +75,15 @@ class TransactionDialog(Screen):
                 id="type",
             ),
             Label("Category:", classes="label"),
-            Select(
-                options=self.get_category_options(),
-                value=category_value,
-                id="category-id",
+            Horizontal(
+                Select(
+                    options=self.get_category_options(),
+                    value=category_value,
+                    id="category-id",
+                ),
+                Button("+", variant="primary", id="add-category"),
+                id="category-select-container",
             ),
-            Button("+", variant="primary", id="add-category"),
             Static(),
             Button("Cancel", variant="warning", id="cancel"),
             Button(button_label, variant="success", id="ok"),
