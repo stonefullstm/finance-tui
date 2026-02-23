@@ -116,6 +116,7 @@ class FinanceApp(App):
         category_container = Container(
             PlotWidget(id="category-plot"),
             classes="category-container",
+            id="category-graphic-container",
         )
         category_container.border_title = "Expenses by Category"
 
@@ -142,6 +143,20 @@ class FinanceApp(App):
         self.sub_title = "A Finance Manager App With Textual & Python"
         self.load_transactions()
         self.load_categories()
+        # Ao montar, seleciona automaticamente a primeira categoria (se existir)
+        try:
+            with CategoryDAO() as dao:
+                categories = sorted(
+                    list(dao.get_all_categories()), key=lambda c: c.name
+                )
+            if categories:
+                first = categories[0]
+                with TransactionDAO() as tdao:
+                    self._totals_category = tdao.get_transactions_by_category(first.id)
+                # Atualiza o gráfico para a primeira categoria sem precisar de clique
+                self.update_category_graphic(first.name)
+        except Exception:
+            logger.exception("Erro ao carregar a primeira categoria para o gráfico")
         self.update_kpis()
         self.create_graphic()
 
@@ -227,7 +242,7 @@ class FinanceApp(App):
             label="Expense Data",
         )
 
-    def update_category_graphic(self):
+    def update_category_graphic(self, category_name: str):
         if not hasattr(self, "_totals_category") or not self._totals_category:
             return
 
@@ -239,7 +254,9 @@ class FinanceApp(App):
 
         months = sorted(totals_by_month.keys())
         values = [totals_by_month[month] for month in months]
-
+        self.query_one("#category-graphic-container").border_title = (
+            f"Expenses for {category_name}"
+        )
         # Eixo X numérico: 0, 1, 2, ...
         x = list(range(len(months)))
 
@@ -301,6 +318,19 @@ class FinanceApp(App):
     @on(DataTable.RowSelected, "#category-list-table")
     def handle_category_selected(self, event: DataTable.RowSelected):
         category_id = int(event.row_key.value)
+        # Obtém a tabela de categorias explicitamente
+        # (evita pegar a primeira DataTable)
+        category_table = self.query_one("#category-list-table", DataTable)
+        try:
+            row_data = category_table.get_row(event.row_key)
+        except Exception:
+            logger.exception(
+                "Falha ao obter a linha selecionada da tabela de categorias"
+            )
+            return
+
+        category_name = row_data[0]
+        logger.info(f"Selected category: {category_name}")
         with TransactionDAO() as dao:
             self._totals_category = dao.get_transactions_by_category(category_id)
-        self.update_category_graphic()
+        self.update_category_graphic(category_name)

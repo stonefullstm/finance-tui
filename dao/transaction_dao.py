@@ -1,5 +1,5 @@
 # dao.py
-from sqlalchemy import select
+from sqlalchemy import func, select, extract
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 from models.models import Transaction
 from db.config import SessionLocal
@@ -151,6 +151,32 @@ class TransactionDAO:
         except SQLAlchemyError as e:
             print(f"Erro ao buscar transações por categoria: {e}")
             return []
+
+    def get_transactions_grouped_by_year_month(
+        self, category_id: int
+    ) -> List[Dict[str, Any]]:
+        """Retorna as transações agrupadas por ano-mês para uma categoria específica"""
+        try:
+            query = (
+                select(
+                    extract("YEAR", Transaction.transaction_date).label("year"),
+                    extract("MONTH", Transaction.transaction_date).label("month"),
+                    func.sum(Transaction.transaction_value).label("total_value"),
+                )
+                .where(Transaction.category_id == category_id)
+                .group_by(
+                    extract("YEAR", Transaction.transaction_date),
+                    extract("MONTH", Transaction.transaction_date),
+                )
+            )
+            transactions = self.session.execute(query).all()
+            grouped_transactions = [
+                {f"{row[0]}-{row[1]:02d}": row[2]} for row in transactions
+            ]
+            return grouped_transactions
+        except SQLAlchemyError as e:
+            print(f"Erro ao buscar transações agrupadas por categoria: {e}")
+            return None
 
     def close(self):
         """Fecha a sessão do banco de dados"""
