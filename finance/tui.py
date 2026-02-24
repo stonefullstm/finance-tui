@@ -36,7 +36,7 @@ class FinanceApp(App):
         ("a", "add", "Add"),
         ("e", "edit", "Edit"),
         ("d", "delete", "Delete"),
-        ("c", "clear_all", "Clear All"),
+        ("i", "ai_insights", "AI Insights (not implemented)"),
         ("q", "request_quit", "Quit"),
     ]
 
@@ -64,14 +64,40 @@ class FinanceApp(App):
             ),
             classes="kpi-bar",
         )
-        add_button = Button("Add", variant="success", id="add")
+        add_button = Button(
+            "Add",
+            variant="success",
+            id="add",
+            tooltip="Add a new transaction",
+        )
         add_button.focus()
         buttons_panel = Vertical(
             add_button,
-            Button("Edit", variant="primary", id="edit"),
-            Button("Delete", variant="warning", id="delete"),
+            Button(
+                "Edit",
+                variant="primary",
+                id="edit",
+                tooltip="Edit selected transaction",
+            ),
+            Button(
+                "Delete",
+                variant="warning",
+                id="delete",
+                tooltip="Delete selected transaction",
+            ),
+            Button(
+                "AI Insights",
+                variant="success",
+                id="ai-insights",
+                tooltip="Get insights from AI (not implemented yet)",
+            ),
             Static(classes="separator"),
-            Button("Clear All", variant="error", id="clear"),
+            Button(
+                "Quit",
+                variant="error",
+                id="quit",
+                tooltip="Quit the application",
+            ),
             classes="buttons-panel",
         )
         # Container com DataTable
@@ -159,13 +185,6 @@ class FinanceApp(App):
             logger.exception("Erro ao carregar a primeira categoria para o gráfico")
         self.update_kpis()
         self.create_graphic()
-
-    def action_request_quit(self):
-        def check_answer(accepted):
-            if accepted:
-                self.exit()
-
-        self.push_screen(QuestionDialog("Do you want to quit?"), check_answer)
 
     def load_transactions(self):
         transactions_list = self.query_one(".transactions-list", DataTable)
@@ -315,6 +334,14 @@ class FinanceApp(App):
             check_answer,
         )
 
+    @on(Button.Pressed, "#quit")
+    def action_request_quit(self):
+        def check_answer(accepted):
+            if accepted:
+                self.exit()
+
+        self.push_screen(QuestionDialog("Do you want to quit?"), check_answer)
+
     @on(DataTable.RowSelected, "#category-list-table")
     def handle_category_selected(self, event: DataTable.RowSelected):
         category_id = int(event.row_key.value)
@@ -330,7 +357,6 @@ class FinanceApp(App):
             return
 
         category_name = row_data[0]
-        logger.info(f"Selected category: {category_name}")
         with TransactionDAO() as dao:
             self._totals_category = dao.get_transactions_by_category(category_id)
         self.update_category_graphic(category_name)
