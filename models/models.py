@@ -14,6 +14,7 @@ class Category(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str]
+    compute: Mapped[str]
     transactions: Mapped[List["Transaction"]] = relationship()
 
     def __repr__(self):
@@ -23,6 +24,7 @@ class Category(Base):
         return {
             "id": self.id,
             "name": self.name,
+            "compute": self.compute,
             "transactions": self.transactions,
         }
 
@@ -31,6 +33,7 @@ class Category(Base):
         return cls(
             id=data.get("id"),
             name=data.get("name"),
+            compute=data.get("compute"),
             transactions=data.get("transactions"),
         )
 
