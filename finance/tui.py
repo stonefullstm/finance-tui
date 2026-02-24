@@ -100,7 +100,7 @@ class FinanceApp(App):
             ),
             classes="buttons-panel",
         )
-        # Container com DataTable
+        # DataTable de transações
         transactions_list = DataTable(classes="transactions-list")
         transactions_list.cursor_type = "row"
         transactions_list.zebra_stripes = True
