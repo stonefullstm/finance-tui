@@ -1,7 +1,7 @@
 # dao.py
 from sqlalchemy import func, select, extract
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
-from models.models import Transaction
+from models.models import Transaction, Category
 from db.config import SessionLocal
 from typing import Any, Dict, List, Optional
 
@@ -26,10 +26,12 @@ class TransactionDAO:
         # Retorna False para propagar exceções (se houver)
         return False
 
-    def get_all_transactions(self, order=False) -> List[Transaction]:
+    def get_all_transactions(self, order=False, all=True) -> List[Transaction]:
         """Retorna todas as transações"""
         try:
             query = select(Transaction)
+            if not all:
+                query = query.join(Category).where(Category.compute == "1")
             if order:
                 query = query.order_by(Transaction.transaction_date.desc())
             transactions = self.session.execute(query).scalars().all()
@@ -109,7 +111,8 @@ class TransactionDAO:
         """Retorna o total de receitas e despesas"""
         try:
             totals = {"income": 0.0, "expense": 0.0}
-            transactions = self.get_all_transactions()
+            transactions = self.get_all_transactions(all=False)
+
             for transaction in transactions:
                 if transaction.type == "Receita":
                     totals["income"] += transaction.transaction_value
@@ -124,7 +127,7 @@ class TransactionDAO:
         """Retorna o total de receitas e despesas por mês"""
         try:
             totals = {}
-            transactions = self.get_all_transactions()
+            transactions = self.get_all_transactions(all=False)
             for transaction in transactions:
                 month = transaction.transaction_date.strftime("%Y-%m")
                 if month not in totals:

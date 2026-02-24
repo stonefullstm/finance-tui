@@ -18,7 +18,7 @@ class Category(Base):
     transactions: Mapped[List["Transaction"]] = relationship()
 
     def __repr__(self):
-        return f"<Category(id={self.id}, name='{self.name}')>"
+        return f"<Category(id={self.id}, name='{self.name}', compute='{self.compute}')>"
 
     def to_dict(self):
         return {
@@ -53,6 +53,7 @@ class Transaction(Base):
         return (
             f"<Transaction(id={self.id}, date={self.transaction_date}, "
             f"value={self.transaction_value}, type={self.type})>"
+            f"category_id={self.category_id}"
             f" - Category: {self.category.name if self.category else 'None'}"
         )
 

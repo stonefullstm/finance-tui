@@ -7,6 +7,7 @@ from models.models import Transaction
 
 # ==================== FIXTURES ====================
 
+
 @pytest.fixture
 def mock_session():
     """Cria uma sessão mock do SQLAlchemy"""
@@ -32,7 +33,7 @@ def sample_transaction():
         transaction_date="2024-01-01",
         transaction_value=100.0,
         type="Despesa",
-        category_id=1
+        category_id=1,
     )
     return transaction
 
@@ -47,7 +48,7 @@ def sample_transactions():
             transaction_date="2024-01-01",
             transaction_value=100.0,
             type="Despesa",
-            category_id=1
+            category_id=1,
         ),
         2: Transaction(
             id=2,
@@ -55,8 +56,8 @@ def sample_transactions():
             transaction_date="2024-01-02",
             transaction_value=250.0,
             type="Receita",
-            category_id=2
-        )
+            category_id=2,
+        ),
     }
 
 

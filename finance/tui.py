@@ -183,7 +183,7 @@ class FinanceApp(App):
                 self.update_category_graphic(first.name)
         except Exception:
             logger.exception("Erro ao carregar a primeira categoria para o gráfico")
-        self.update_kpis()
+        # self.update_kpis()
         self.create_graphic()
 
     def load_transactions(self):
@@ -201,7 +201,7 @@ class FinanceApp(App):
                     # Armazena o ID da transação como chave da linha
                     key=transaction.id,
                 )
-        self._last_transactions = transactions  # guarda para cálculo
+        # self._last_transactions = transactions  # guarda para cálculo
         self.update_kpis()
 
     def load_categories(self):
@@ -230,6 +230,8 @@ class FinanceApp(App):
             self.load_transactions()
 
     def update_kpis(self):
+        with TransactionDAO() as dao:
+            self._last_transactions = list(dao.get_all_transactions(all=False))
         income = sum(
             t.transaction_value for t in self._last_transactions if t.type == "Receita"
         )
@@ -273,9 +275,9 @@ class FinanceApp(App):
 
         months = sorted(totals_by_month.keys())
         values = [totals_by_month[month] for month in months]
-        self.query_one("#category-graphic-container").border_title = (
-            f"Expenses for {category_name}"
-        )
+        self.query_one(
+            "#category-graphic-container"
+        ).border_title = f"Expenses for {category_name}"
         # Eixo X numérico: 0, 1, 2, ...
         x = list(range(len(months)))
 
