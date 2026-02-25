@@ -89,5 +89,6 @@ def montar_prompt_para_openai(resumo: dict) -> str:
     Dê recomendações específicas com valores (ex.: "reduza X na categoria Y,
     isso economiza R$ Z por mês") e proponha metas (ex.: reserva de emergência
     equivalente a N meses de despesas).
+    Formate sua resposta usando markdown, com títulos e listas para facilitar a leitura.
     """
     return prompt

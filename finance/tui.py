@@ -14,7 +14,14 @@ from dao.category_dao import CategoryDAO
 from dao.transaction_dao import TransactionDAO
 from finance.question_dialog import QuestionDialog
 from finance.transaction_dialog import TransactionDialog
+from finance.ai_prepare import montar_prompt_para_openai, gerar_resumo_financeiro
+from finance.response_ai import ResponseAIScreen
+from openai import OpenAI
+from dotenv import load_dotenv
+import os
 import logging
+
+load_dotenv()
 
 logging.basicConfig(
     level=logging.INFO,
@@ -27,6 +34,11 @@ logging.basicConfig(
 
 # Uso do logger
 logger = logging.getLogger(__name__)
+
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
+
+client = OpenAI(api_key=OPENAI_API_KEY)
 
 
 class FinanceApp(App):
@@ -275,9 +287,9 @@ class FinanceApp(App):
 
         months = sorted(totals_by_month.keys())
         values = [totals_by_month[month] for month in months]
-        self.query_one(
-            "#category-graphic-container"
-        ).border_title = f"Expenses for {category_name}"
+        self.query_one("#category-graphic-container").border_title = (
+            f"Expenses for {category_name}"
+        )
         # Eixo X numérico: 0, 1, 2, ...
         x = list(range(len(months)))
 
@@ -334,6 +346,85 @@ class FinanceApp(App):
         self.push_screen(
             QuestionDialog(f"Do you want to delete '{transaction.description}'?"),
             check_answer,
+        )
+
+    @on(Button.Pressed, "#ai-insights")
+    def action_ai_insights(self):
+        # resumo = gerar_resumo_financeiro()
+        # prompt = montar_prompt_para_openai(resumo)
+        # response = client.chat.completions.create(
+        #     model=OPENAI_MODEL,
+        #     messages=[
+        #         {
+        #             "role": "system",
+        #             "content": """Você é um assistente especialista
+        #              em finanças pessoais.""",
+        #         },
+        #         {"role": "user", "content": prompt},
+        #     ],
+        #     max_tokens=500,
+        # )
+        # relatorio = response.choices[0].message.content.strip()
+        relatorio = (
+            """
+# Markdown Viewer
+
+This is an example of Textual's `MarkdownViewer` widget.
+
+
+## Features
+
+Markdown syntax and extensions are supported.
+
+- Typography *emphasis*, **strong**, `inline code` etc.
+- Headers
+- Lists (bullet and ordered)
+- Syntax highlighted code blocks
+- Tables!
+
+## Tables
+
+Tables are displayed in a DataTable widget.
+
+| Name            | Type   | Default | Description                        |
+| --------------- | ------ | ------- | ---------------------------------- |
+| `show_header`   | `bool` | `True`  | Show the table header              |
+| `fixed_rows`    | `int`  | `0`     | Number of fixed rows               |
+| `fixed_columns` | `int`  | `0`     | Number of fixed columns            |
+| `zebra_stripes` | `bool` | `False` | Display alternating colors on rows |
+| `header_height` | `int`  | `1`     | Height of header row               |
+| `show_cursor`   | `bool` | `True`  | Show a cell cursor                 |
+
+
+## Code Blocks
+
+Code blocks are syntax highlighted.
+
+```python
+class ListViewExample(App):
+    def compose(self) -> ComposeResult:
+        yield ListView(
+            ListItem(Label("One")),
+            ListItem(Label("Two")),
+            ListItem(Label("Three")),
+        )
+        yield Footer()
+```
+
+## Litany Against Fear
+
+I must not fear.
+Fear is the mind-killer.
+Fear is the little-death that brings total obliteration.
+I will face my fear.
+I will permit it to pass over me and through me.
+And when it has gone past, I will turn the inner eye to see its path.
+Where the fear has gone there will be nothing. Only I will remain.
+            """
+        )
+        self.push_screen(
+            ResponseAIScreen(relatorio),
+            lambda accepted: None,
         )
 
     @on(Button.Pressed, "#quit")
