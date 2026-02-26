@@ -2,6 +2,8 @@ from textual.containers import Horizontal
 from textual.screen import Screen
 from textual.widgets import Button, MarkdownViewer
 
+from finance.save_pdf import DirectoryTreeApp
+
 
 class ResponseAIScreen(Screen):
     """Tela para exibir resposta da IA"""
@@ -22,4 +24,12 @@ class ResponseAIScreen(Screen):
 
     def on_button_pressed(self, event):
         if event.button.id == "close-btn":
+            self.dismiss()
+        elif event.button.id == "save-btn":
+            # Salva a resposta em PDF
+            # pdf_path = "response_ai.pdf"
+            # pdf = MarkdownPdf()
+            # pdf.add_section(Section(self.response_text))
+            # pdf.save(pdf_path)
+            self.app.push_screen(DirectoryTreeApp(self.response_text))
             self.dismiss()

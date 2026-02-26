@@ -1,0 +1,8 @@
+DirectoryTreeApp {
+  align: center middle;
+}
+
+#save-pdf-container {
+    width: 50;
+    height: auto;
+}
