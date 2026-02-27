@@ -1,4 +1,4 @@
-from textual.containers import Horizontal
+from textual.containers import Container, Horizontal
 from textual.screen import Screen
 from textual.widgets import Button, MarkdownViewer
 
@@ -15,12 +15,17 @@ class ResponseAIScreen(Screen):
         self.response_text = response_text
 
     def compose(self):
-        yield MarkdownViewer(self.response_text, classes="response-viewer")
-        yield Horizontal(
-            Button("Close", variant="primary", id="close-btn"),
-            Button("Save PDF", variant="success", id="save-btn"),
-            id="button-container",
+        response_container = Container(
+            MarkdownViewer(self.response_text, classes="response-viewer"),
+            Horizontal(
+                Button("Close", variant="primary", id="close-btn"),
+                Button("Save PDF", variant="success", id="save-btn"),
+                id="response-button-container",
+            ),
+            id="response-container",
         )
+        response_container.border_title = "AI Insights"
+        yield response_container
 
     def on_button_pressed(self, event):
         if event.button.id == "close-btn":

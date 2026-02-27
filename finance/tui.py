@@ -350,78 +350,78 @@ class FinanceApp(App):
 
     @on(Button.Pressed, "#ai-insights")
     def action_ai_insights(self):
-        # resumo = gerar_resumo_financeiro()
-        # prompt = montar_prompt_para_openai(resumo)
-        # response = client.chat.completions.create(
-        #     model=OPENAI_MODEL,
-        #     messages=[
-        #         {
-        #             "role": "system",
-        #             "content": """Você é um assistente especialista
-        #              em finanças pessoais.""",
-        #         },
-        #         {"role": "user", "content": prompt},
-        #     ],
-        #     max_tokens=500,
-        # )
-        # relatorio = response.choices[0].message.content.strip()
-        relatorio = (
-            """
-# Markdown Viewer
-
-This is an example of Textual's `MarkdownViewer` widget.
-
-
-## Features
-
-Markdown syntax and extensions are supported.
-
-- Typography *emphasis*, **strong**, `inline code` etc.
-- Headers
-- Lists (bullet and ordered)
-- Syntax highlighted code blocks
-- Tables!
-
-## Tables
-
-Tables are displayed in a DataTable widget.
-
-| Name            | Type   | Default | Description                        |
-| --------------- | ------ | ------- | ---------------------------------- |
-| `show_header`   | `bool` | `True`  | Show the table header              |
-| `fixed_rows`    | `int`  | `0`     | Number of fixed rows               |
-| `fixed_columns` | `int`  | `0`     | Number of fixed columns            |
-| `zebra_stripes` | `bool` | `False` | Display alternating colors on rows |
-| `header_height` | `int`  | `1`     | Height of header row               |
-| `show_cursor`   | `bool` | `True`  | Show a cell cursor                 |
-
-
-## Code Blocks
-
-Code blocks are syntax highlighted.
-
-```python
-class ListViewExample(App):
-    def compose(self) -> ComposeResult:
-        yield ListView(
-            ListItem(Label("One")),
-            ListItem(Label("Two")),
-            ListItem(Label("Three")),
+        resumo = gerar_resumo_financeiro()
+        prompt = montar_prompt_para_openai(resumo)
+        response = client.chat.completions.create(
+            model=OPENAI_MODEL,
+            messages=[
+                {
+                    "role": "system",
+                    "content": """Você é um assistente especialista
+                     em finanças pessoais.""",
+                },
+                {"role": "user", "content": prompt},
+            ],
+            max_tokens=500,
         )
-        yield Footer()
-```
+        relatorio = response.choices[0].message.content.strip()
+#         relatorio = (
+#             """
+# # Markdown Viewer
 
-## Litany Against Fear
+# This is an example of Textual's `MarkdownViewer` widget.
 
-I must not fear.
-Fear is the mind-killer.
-Fear is the little-death that brings total obliteration.
-I will face my fear.
-I will permit it to pass over me and through me.
-And when it has gone past, I will turn the inner eye to see its path.
-Where the fear has gone there will be nothing. Only I will remain.
-            """
-        )
+
+# ## Features
+
+# Markdown syntax and extensions are supported.
+
+# - Typography *emphasis*, **strong**, `inline code` etc.
+# - Headers
+# - Lists (bullet and ordered)
+# - Syntax highlighted code blocks
+# - Tables!
+
+# ## Tables
+
+# Tables are displayed in a DataTable widget.
+
+# | Name            | Type   | Default | Description                        |
+# | --------------- | ------ | ------- | ---------------------------------- |
+# | `show_header`   | `bool` | `True`  | Show the table header              |
+# | `fixed_rows`    | `int`  | `0`     | Number of fixed rows               |
+# | `fixed_columns` | `int`  | `0`     | Number of fixed columns            |
+# | `zebra_stripes` | `bool` | `False` | Display alternating colors on rows |
+# | `header_height` | `int`  | `1`     | Height of header row               |
+# | `show_cursor`   | `bool` | `True`  | Show a cell cursor                 |
+
+
+# ## Code Blocks
+
+# Code blocks are syntax highlighted.
+
+# ```python
+# class ListViewExample(App):
+#     def compose(self) -> ComposeResult:
+#         yield ListView(
+#             ListItem(Label("One")),
+#             ListItem(Label("Two")),
+#             ListItem(Label("Three")),
+#         )
+#         yield Footer()
+# ```
+
+# ## Litany Against Fear
+
+# I must not fear.
+# Fear is the mind-killer.
+# Fear is the little-death that brings total obliteration.
+# I will face my fear.
+# I will permit it to pass over me and through me.
+# And when it has gone past, I will turn the inner eye to see its path.
+# Where the fear has gone there will be nothing. Only I will remain.
+#             """
+#         )
         self.push_screen(
             ResponseAIScreen(relatorio),
             lambda accepted: None,

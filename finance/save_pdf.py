@@ -27,7 +27,7 @@ class DirectoryTreeApp(Screen):
         self.selected_directory = None
 
     def compose(self) -> ComposeResult:
-        yield Vertical(
+        save_pdf_container = Vertical(
             FilteredDirectoryTree("./", id="directory-tree"),
             Horizontal(
                 Button("Save PDF", variant="success", disabled=True, id="save-btn"),
@@ -36,6 +36,8 @@ class DirectoryTreeApp(Screen):
             ),
             id="save-pdf-container",
         )
+        save_pdf_container.border_title = "Select Directory to Save PDF"
+        yield save_pdf_container
 
     @on(DirectoryTree.DirectorySelected)
     def handle_directory_selected(self, event: DirectoryTree.DirectorySelected):

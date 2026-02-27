@@ -1,17 +1,25 @@
-.response-viewer {
-    height: 90%;
+#response-container {
+    width: 100%;
+    height: auto;
     border: heavy $primary;
     border-title-align: center;
     border-title-color: $accent;
     border-title-background: $surface;
     border-title-style: bold;
+    align: center middle;
 }
 
-#button-container {
+.response-viewer {
+    height: 90%;
+    border: heavy $error;
+
+}
+
+#response-button-container {
     align: right middle;
     width: 100%;
 }
 
-#button-container Button {
+#response-button-container Button {
     margin-left: 1;
 }
