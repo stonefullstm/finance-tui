@@ -1,5 +1,5 @@
 from textual.screen import Screen
-from textual.widgets import Button, Label, Input
+from textual.widgets import Button, Label, Input, Select
 from textual.containers import Grid
 
 
@@ -17,7 +17,12 @@ class CategoryDialog(Screen):
                 classes="input",
                 id="category_name",
             ),
-            # Static(),
+            Label("Compute:", classes="label"),
+            Select(
+                options=[("Sim", "1"), ("Não", "2")],
+                classes="input",
+                id="compute_option",
+            ),
             Button("Cancel", variant="warning", id="cancel"),
             Button("Save", variant="success", id="ok"),
             id="category-dialog",

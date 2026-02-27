@@ -4,9 +4,9 @@ CategoryDialog {
 }
 
 CategoryDialog > Grid {
-    grid-size: 2 4;  /* 4 linhas, não 5 */
+    grid-size: 2 6;  /* 4 linhas, não 5 */
     grid-gutter: 1 2;
-    grid-rows: auto auto auto 3;  /* Última linha com altura 3 para botões */
+    grid-rows: auto auto auto auto auto 3;  /* Última linha com altura 3 para botões */
     padding: 1 2;
     width: 50;
     height: auto;

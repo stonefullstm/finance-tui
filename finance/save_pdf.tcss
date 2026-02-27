@@ -1,0 +1,26 @@
+DirectoryTreeApp {
+  align: center middle;
+}
+
+#save-pdf-container {
+    width: 50;
+    height: 30;
+    border: heavy $accent;
+    border-title-color: $accent;
+    border-title-background: $surface;
+    border-title-style: bold;
+}
+
+#directory-tree {
+    height: 90%;
+    border: heavy $primary;
+}
+
+#button-container {
+    align: right middle;
+    height: 10%;
+}
+
+#button-container Button {
+    margin-left: 1;
+}

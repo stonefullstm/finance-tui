@@ -1,6 +1,6 @@
 import pytest
 from unittest.mock import MagicMock, patch
-from sqlalchemy.exc import SQLAlchemyError, IntegrityError
+# from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 from dao.transaction_dao import TransactionDAO
 from models.models import Transaction
 
